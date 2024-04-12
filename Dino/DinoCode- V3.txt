@@ -1,0 +1,72 @@
+# include <AFMotor.h>
+#include <Servo.h>
+
+AF_DCMotor leftmotor(1);
+AF_DCMotor rightmotor(2);
+
+Servo myservo;
+
+
+
+void setup(){
+
+  myservo.attach(10);
+
+  Serial.begin(9600);
+  Serial.print("DINO");
+}
+
+void loop(){
+  // -----------------------------------------------------
+  int L=0,R=0,F=0,B=0;
+  F= analogRead(A1); Serial.print(F);
+  B= analogRead(A0); Serial.print(B);
+  R= analogRead(A3); Serial.print(R);
+  L= analogRead(A2); Serial.println(L);
+  // -----------------------------------------------------
+  if(L>500){
+  int potpin = A2;  
+  int val;
+  val = analogRead(potpin);            
+  val = map(val, 0, 764, 90, 180);   
+  myservo.write(val);
+  }
+  else{
+  int potpin = A3;  
+  int val;
+  val = analogRead(potpin);            
+  val = map(val, 0, 764, 90, 0);   
+  myservo.write(val);
+  }
+
+  // ----------------------------------------------------------
+
+
+
+
+
+  if (F>500){
+  leftmotor.setSpeed(speed(100));
+  leftmotor.run(FORWARD);
+  rightmotor.setSpeed(speed(100));
+  rightmotor.run(FORWARD);
+  }
+  else if (B>500){
+  leftmotor.setSpeed(speed(100));
+  leftmotor.run(BACKWARD);
+  rightmotor.setSpeed(speed(100));
+ leftmotor.run(BACKWARD);
+  }
+  else {
+    leftmotor.run(RELEASE);
+    rightmotor.run(RELEASE);
+  }
+  // ----------------------------------------------------------
+}
+int speed (int percentage){
+  return map(percentage,0,100,0,255);
+}
+
+
+
+ 

@@ -1,0 +1,53 @@
+# include <AFMotor.h>
+# include <Servo.h>
+
+AF_DCMotor leftmotor(1);
+AF_DCMotor rightmotor(2);
+
+Servo steering;
+
+void setup(){
+
+  steering.attach(10);
+
+  Serial.begin(9600);
+  Serial.print("DINO");
+}
+
+void loop(){
+  // -----------------------------------------------------
+  int L=0,R=0,F=0,B=0;
+  F= analogRead(A1); Serial.print(F);
+  B= analogRead(A0); Serial.print(B);
+  R= analogRead(A2); Serial.print(R);
+  L= analogRead(A3); Serial.println(L);
+  // -----------------------------------------------------
+  int angle =0;
+
+  if(500<L<800){
+    angle=0;
+    steering.write(angle);
+  }
+  else if(500<R<800){
+    angle=180;
+    steering.write(angle);
+  }
+  else {
+    angle=90;
+    steering.write(angle);
+  }
+  delay(20);
+  
+  // ----------------------------------------------------------
+  leftmotor.setSpeed(speed(100));
+  leftmotor.run(FORWARD);
+  rightmotor.setSpeed(speed(100));
+  rightmotor.run(FORWARD);
+  // ----------------------------------------------------------
+}
+int speed (int percentage){
+  return map(percentage,0,100,0,255);
+}
+
+
+

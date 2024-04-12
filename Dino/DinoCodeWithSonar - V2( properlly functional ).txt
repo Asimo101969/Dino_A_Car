@@ -1,0 +1,108 @@
+#include <AFMotor.h>
+#include <Servo.h>
+
+AF_DCMotor leftmotor(1);
+AF_DCMotor rightmotor(2);
+
+Servo myservo;
+
+const int trigpin = 18;
+const int echopin = 19;
+long duration;
+int distance;
+
+// ---------------------------------------------
+void setup() {
+
+  myservo.attach(10);
+
+  Serial.begin(9600);
+  Serial.print("DINO");
+
+
+  pinMode(trigpin, OUTPUT);
+  pinMode(echopin, INPUT);
+}
+
+
+// -------------------------------------------------
+void loop() {
+
+
+  // ---------------------------------------------------
+  digitalWrite(trigpin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigpin, HIGH);
+  delayMicroseconds(4);
+  duration = pulseIn(echopin, HIGH);
+  distance = duration * 0.034 / 2;
+  Serial.println(distance);
+
+
+
+  // -----------------------------------------------------
+  int L = 0, R = 0, F = 0, B = 0;
+  F = analogRead(A1);
+  Serial.print(F);
+  B = analogRead(A0);
+  Serial.print(B);
+  R = analogRead(A3);
+  Serial.print(R);
+  L = analogRead(A2);
+  Serial.println(L);
+
+
+
+  // -----------------------------------------------------
+  if (L > 50 && distance>30) {
+    myservo.write(180);
+  } 
+  else if(R>50 &&distance>30) {
+    myservo.write(0);
+  }
+  else if(L==0&&R==0&&distance>30) {
+    myservo.write(90);
+  }
+  else if(distance<30) {
+    myservo.write(180);
+  }
+  else{
+    myservo.write(90);
+  }
+
+
+
+  // ----------------------------------------------------------
+  if (F > 50 && distance>15 ) {
+    leftmotor.setSpeed(speed(100));
+    leftmotor.run(FORWARD);
+    rightmotor.setSpeed(speed(100));
+    rightmotor.run(FORWARD);
+  } 
+  else if (B > 50 && distance>15) {
+    leftmotor.setSpeed(speed(100));
+    leftmotor.run(BACKWARD);
+    rightmotor.setSpeed(speed(100));
+    rightmotor.run(BACKWARD);
+  } 
+  else if(distance<=15){
+    myservo.write(90);
+    leftmotor.setSpeed(speed(100));
+    leftmotor.run(BACKWARD);
+    rightmotor.setSpeed(speed(100));
+    rightmotor.run(BACKWARD);
+    
+    delay(1000);
+  }
+  else {
+    leftmotor.run(RELEASE);
+    rightmotor.run(RELEASE);
+  }
+}
+
+
+
+// ----------------------------------------------------------
+int speed(int percentage) {
+  return map(percentage, 0, 100, 0, 255);
+}
